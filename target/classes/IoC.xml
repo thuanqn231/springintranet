@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd
+		http://www.springframework.org/schema/tx
+        https://www.springframework.org/schema/tx/spring-tx.xsd"
+		>
+
+
+<bean id ="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+	<property name="driverClassName" value="com.mysql.jdbc.Driver" />
+    <property name="url" value="jdbc:mysql://localhost:3306/intradb?serverTimezone=UTC" />
+    <property name="username" value="root" />
+    <property name="password" value="123456" />
+</bean>
+
+<bean name="sessionFatory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
+	<property name="dataSource" ref="dataSource"></property>
+	<property name="packagesToScan" value="com.nttech.entity"></property>
+	<property name="hibernateProperties">
+		<props>
+			<prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
+			<prop key="hibernate.show_sql">true</prop>
+		</props>
+	</property>
+</bean>
+
+<bean id="transactionManager" class="org.springframework.orm.hibernate5.HibernateTransactionManager">
+    <property name="sessionFatory" ref="sessionFatory"/>
+</bean>
+
+<tx:annotation-driven transaction-manager="transactionManager"/>
+
+<bean id="dbIntranet" class="com.nttech.entity.DatabaseIntranetJDBC">
+	<property name="dataSource" ref="dataSource"></property>
+</bean>
+
+<bean name="employee" class="com.nttech.entity.Employee" scope="prototype">
+	<constructor-arg value="Nguyen Thuan"/>
+	<constructor-arg value = "18"/>
+	<property name="list">
+		<list>
+			<value>Nguyen Thuan</value>
+			<value>28</value>
+			<value>45</value>
+		</list>
+	</property>
+	
+	<property name="map">
+		<map>
+			<entry key="1" value="Nguyen Thuan"/>
+			<entry key="2" value="Nguyen Thuan 2"/>
+			<entry key="3" value="Nguyen Thuan 3"/>
+			<entry key="4" value="Nguyen Thuan 4"/>
+		</map>
+	</property>
+	
+	<property name="properties">
+		<props>
+			<prop key="jsbc">mysql</prop>
+			<prop key="user">thuan.ng</prop>
+			<prop key="password">191291</prop>
+		</props>
+	</property>
+	
+	
+</bean>
+
+<bean name="resourceLoader" class="com.nttech.controller.CustomResourceLoader" autowire="byType"></bean>
+</beans>
